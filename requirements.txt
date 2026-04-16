@@ -1,0 +1,16 @@
+numpy
+scikit-learn
+spacy
+nltk
+joblib
+fastapi
+uvicorn[standard]
+pymongo
+pydantic-settings
+google-api-python-client
+google-auth
+requests
+lime
+shap
+langdetect
+
