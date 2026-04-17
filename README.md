@@ -1,5 +1,7 @@
 # Email Spam Detector (NLP + ML)
 
+[![Tests](https://github.com/prasannapbhurke/AI-Email-Spam-Detector/actions/workflows/tests.yml/badge.svg)](https://github.com/prasannapbhurke/AI-Email-Spam-Detector/actions/workflows/tests.yml)
+
 This project trains and persists a production-style email spam detector using:
 - spaCy (lemmatization)
 - NLTK (stopword removal)
