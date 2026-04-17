@@ -15,7 +15,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from bson import ObjectId
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
 from pymongo.collection import Collection
 
 from spam_detector.db.repositories.prediction_repo import LABEL_NOT_SPAM, LABEL_SPAM
@@ -32,7 +32,7 @@ def get_collection(request) -> Collection:
 
 
 @router.get("/stats")
-def get_dashboard_stats(request) -> dict[str, Any]:
+def get_dashboard_stats(request: Request) -> dict[str, Any]:
     """
     Get overall dashboard statistics.
 
@@ -87,9 +87,9 @@ def get_dashboard_stats(request) -> dict[str, Any]:
 
 @router.get("/accuracy-over-time")
 def get_accuracy_over_time(
-    request,
+    request: Request,
     days: int = Query(default=30, ge=1, le=90),
-    bucket: str = Query(default="day", regex="^(hour|day|week)$"),
+    bucket: str = Query(default="day", pattern="^(hour|day|week)$"),
 ) -> dict[str, Any]:
     """
     Get accuracy metrics over time.
@@ -184,7 +184,7 @@ def get_accuracy_over_time(
 
 @router.get("/spam-stats")
 def get_spam_stats(
-    request,
+    request: Request,
     days: int = Query(default=7, ge=1, le=90),
 ) -> dict[str, Any]:
     """
@@ -294,7 +294,7 @@ def get_spam_stats(
 
 @router.get("/model-performance")
 def get_model_performance(
-    request,
+    request: Request,
     days: int = Query(default=7, ge=1, le=90),
 ) -> dict[str, Any]:
     """
@@ -411,7 +411,7 @@ def get_model_performance(
 
 @router.get("/feedback-analytics")
 def get_feedback_analytics(
-    request,
+    request: Request,
     days: int = Query(default=7, ge=1, le=90),
 ) -> dict[str, Any]:
     """
@@ -516,7 +516,7 @@ def get_feedback_analytics(
 
 @router.get("/retraining-history")
 def get_retraining_history(
-    request,
+    request: Request,
     limit: int = Query(default=10, ge=1, le=100),
 ) -> dict[str, Any]:
     """

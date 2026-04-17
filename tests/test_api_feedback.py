@@ -1,18 +1,10 @@
 """Tests for feedback API endpoint."""
 
-import sys
-from pathlib import Path
-
-project_root = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(project_root / "src"))
-
 from fastapi.testclient import TestClient
 from spam_detector.api.main import app
 
-client = TestClient(app)
 
-
-def test_feedback_endpoint_valid():
+def test_feedback_endpoint_valid(client: TestClient):
     """Test submitting valid feedback."""
     # First make a prediction to get a prediction_id
     pred_response = client.post("/predict", json={"email_text": "test email"})
@@ -22,38 +14,40 @@ def test_feedback_endpoint_valid():
     # Submit feedback
     feedback_payload = {
         "prediction_id": prediction_id,
-        "correct_label": "spam"
+        "label": "spam"
     }
     response = client.post("/feedback", json=feedback_payload)
     assert response.status_code == 200
     data = response.json()
-    assert data["success"] is True
+    assert data["prediction_id"] == prediction_id
+    assert data["label"] == "spam"
+    assert "feedback_at" in data
 
 
-def test_feedback_endpoint_invalid_prediction_id():
-    """Test feedback with non-existent prediction_id."""
+def test_feedback_endpoint_invalid_prediction_id(client: TestClient):
+    """Test feedback with non-existent prediction_id (valid format but not found)."""
     feedback_payload = {
-        "prediction_id": "invalid_id",
-        "correct_label": "spam"
+        "prediction_id": "507f1f77bcf86cd799439011",  # valid ObjectId format, likely not in DB
+        "label": "spam"
     }
     response = client.post("/feedback", json=feedback_payload)
     assert response.status_code == 404
 
 
-def test_feedback_endpoint_invalid_label():
+def test_feedback_endpoint_invalid_label(client: TestClient):
     """Test feedback with invalid label."""
     pred_response = client.post("/predict", json={"email_text": "test email"})
     prediction_id = pred_response.json()["prediction_id"]
 
     feedback_payload = {
         "prediction_id": prediction_id,
-        "correct_label": "invalid_label"
+        "label": "invalid_label"
     }
     response = client.post("/feedback", json=feedback_payload)
     assert response.status_code == 422
 
 
-def test_feedback_endpoint_missing_field():
+def test_feedback_endpoint_missing_field(client: TestClient):
     """Test feedback with missing required field."""
     payload = {"prediction_id": "some_id"}
     response = client.post("/feedback", json=payload)
