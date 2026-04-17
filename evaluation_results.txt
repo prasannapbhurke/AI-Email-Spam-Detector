@@ -1,0 +1,9 @@
+Model Evaluation Results
+==================================================
+Model: models/spam_detector.joblib
+Dataset: data/spam_dataset.csv
+Dataset size: 2000
+Accuracy:  0.9990
+Precision: 0.9980
+Recall:    1.0000
+F1-Score:  0.9990
