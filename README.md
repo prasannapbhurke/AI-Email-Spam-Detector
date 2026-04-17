@@ -34,20 +34,44 @@ Requires a spaCy model with vectors (e.g. `en_core_web_md`).
 python scripts/train_spam_detector.py --data path/to/dataset.csv --feature-type embeddings --output models/spam_detector.joblib
 ```
 
-## Quick Evaluation
+### Gmail Integration
 
-After training, evaluate the model performance:
+Automatically check your Gmail inbox for spam:
 
 ```bash
-# Run evaluation script
-python scripts/evaluate_model.py --model models/spam_detector.joblib --data data/spam_dataset.csv
+# 1. Get credentials from Google Cloud Console (see docs/GMAIL_INTEGRATION.md)
+# 2. Run the monitor
+python scripts/run_gmail_spam_detector.py --credentials credentials.json --dry-run --max-emails 10
 
-# Output includes:
-# - Accuracy
-# - Precision, Recall, F1-score
-# - Confusion matrix
-# - Classification report
+# 3. Once confident, run for real
+python scripts/run_gmail_spam_detector.py --credentials credentials.json
 ```
+
+See [docs/GMAIL_INTEGRATION.md](docs/GMAIL_INTEGRATION.md) for full setup guide.
+
+---
+
+## Quick Test
+
+```bash
+# 1. Start the API server
+python scripts/run_api.py --port 8000
+
+# 2. In another terminal, test a prediction
+python -c "
+from spam_detector.ml.model_service import ModelService
+svc = ModelService('models/spam_detector.joblib')
+svc.load()
+result = svc.predict('WIN FREE MONEY NOW!!!')
+print(f'Spam? {result.prediction_label} ({result.confidence:.2%})')
+"
+```
+
+Or use the interactive checker:
+```bash
+python scripts/check_email.py
+```
+Paste your email content and get instant result.
 
 ### Expected Performance
 

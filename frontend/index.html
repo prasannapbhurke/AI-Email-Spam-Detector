@@ -225,7 +225,8 @@
     </div>
 
     <script>
-        const API_URL = window.location.origin; // Same origin, port 8000
+        // API runs on port 8000, frontend on 8080
+        const API_URL = 'http://localhost:8000';
 
         document.getElementById('spamForm').addEventListener('submit', async (e) => {
             e.preventDefault();
