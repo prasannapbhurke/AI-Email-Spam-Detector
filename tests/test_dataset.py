@@ -3,7 +3,7 @@
 import sys
 from pathlib import Path
 
-project_root = Path(__file__).resolve().parents[2]
+project_root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(project_root / "src"))
 
 from spam_detector.training.dataset import load_dataset_from_csv, DatasetConfig, _default_label_to_int
